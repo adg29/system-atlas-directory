@@ -2,7 +2,7 @@
   "name": "System Atlas Directory",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "description": "Curated isometric atlases of real systems.",
-  "updated": "2026-08-24",
+  "updated": "2026-08-25",
   "atlases": [
     {
       "id": "qm",
@@ -16,6 +16,19 @@
       "structures": 14,
       "chapters": 10,
       "updated": "2026-08-24"
+    },
+    {
+      "id": "gev",
+      "title": "God's Eye View",
+      "subtitle": "Photoreal 3D globe of live public signals",
+      "source": "https://github.com/bilawalsidhu/gods-eye-view",
+      "map": "https://adg29.github.io/system-atlas-directory/gev/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/gev/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/gev/atlas/data.mjs",
+      "status": "free",
+      "structures": 15,
+      "chapters": 10,
+      "updated": "2026-08-25"
     }
   ]
 }

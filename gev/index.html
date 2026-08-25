@@ -1,0 +1,403 @@
+<meta charset="utf-8">
+<title>GEV Atlas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --paper:#E6DFBE; --paper-2:#DCD4AF; --ink:#17170F; --ink-2:#6E6B54; --rule:#B9B293; --ghost:#8E8A70;
+  --hi-bg:#17170F; --hi-fg:#E6DFBE; --face:#EFE9CC; --grid:#CFC8A3;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1E1D15; --paper-2:#26251B; --ink:#E6DFBE; --ink-2:#A8A388; --rule:#4A4838; --ghost:#6E6B54;
+    --hi-bg:#E6DFBE; --hi-fg:#1E1D15; --face:#2A2920; --grid:#33321F;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1E1D15; --paper-2:#26251B; --ink:#E6DFBE; --ink-2:#A8A388; --rule:#4A4838; --ghost:#6E6B54;
+  --hi-bg:#E6DFBE; --hi-fg:#1E1D15; --face:#2A2920; --grid:#33321F;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.55;overflow:hidden}
+#app{display:grid;grid-template-rows:52px 1fr 30px;height:100vh;min-height:600px}
+#top{display:flex;align-items:stretch;border-bottom:1.5px solid var(--ink);overflow:hidden}
+.stat{padding:6px 14px 4px;border-right:1.5px solid var(--ink);min-width:0;white-space:nowrap}
+.stat .k{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.stat .v{font-size:15px;font-variant-numeric:tabular-nums}
+.stat.grow{flex:1;border-right:none;overflow:hidden}
+#controls{display:flex;gap:8px;align-items:center;padding:0 14px;border-left:1.5px solid var(--ink)}
+button.ctl{font:inherit;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--paper);color:var(--ink);border:1.5px solid var(--ink);padding:5px 10px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
+button.ctl:hover{background:var(--face)}
+button.ctl:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+button.ctl:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+button.ctl.primary{background:var(--hi-bg);color:var(--hi-fg)}
+button.ctl.primary:hover{background:var(--hi-bg);opacity:.9}
+button.ctl:disabled{opacity:.4;cursor:default;box-shadow:none}
+#main{display:grid;grid-template-columns:232px 1fr 440px;min-height:0}
+#index{border-right:1.5px solid var(--ink);overflow-y:auto;padding:10px 8px 20px}
+#index h4{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:12px 4px 6px;font-weight:500}
+#index h4:first-child{margin-top:2px}
+.ix{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;font:inherit;font-size:11.5px;line-height:1.3;background:var(--paper);color:var(--ink);border:1.5px solid var(--ink);padding:7px 8px;margin:0 0 6px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);text-transform:uppercase;letter-spacing:.02em}
+.ix .code{color:var(--ink-2);min-width:16px;font-size:10px;padding-top:1px}
+.ix .nm{flex:1}
+.ix .n{color:var(--ink-2);font-size:10.5px;font-variant-numeric:tabular-nums}
+.ix.ghost{border-style:dashed;box-shadow:none;color:var(--ink-2)}
+.ix.later{border-color:var(--rule);box-shadow:none;color:var(--ink-2);opacity:.75}
+.ix.later .n{font-size:9px;letter-spacing:.06em}
+.ix.new{outline:1.5px dashed var(--ink);outline-offset:2px}
+.ix.on{background:var(--hi-bg);color:var(--hi-fg)}
+.ix.on .code,.ix.on .n{color:var(--hi-fg);opacity:.75}
+.ix:hover:not(.on){background:var(--face)}
+.ix:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+#canvasWrap{position:relative;min-width:0;background:var(--paper)}
+#svg{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#svg.dragging{cursor:grabbing}
+#zoom{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px}
+#zoom button{width:30px;height:26px;font:inherit;font-size:14px;background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+#rail{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:calc(100% - 70px)}
+#rail .ch{width:22px;height:22px;font:inherit;font-size:10px;background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);cursor:pointer;padding:0;line-height:1}
+#rail .ch.done{background:var(--face)}
+#rail .ch.on{background:var(--hi-bg);color:var(--hi-fg)}
+#rail .ch.locked{border-style:dashed;color:var(--ink-2)}
+#rail .ch:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+#rail .title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-left:6px}
+#rail .title b{color:var(--ink);font-weight:500}
+#flowSel{position:absolute;left:12px;bottom:12px;display:none;gap:6px}
+#flowSel button{font:inherit;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper);border:1.5px solid var(--ink);color:var(--ink);padding:3px 8px;cursor:pointer}
+#flowSel button.on{background:var(--hi-bg);color:var(--hi-fg)}
+#tip{position:absolute;pointer-events:none;background:var(--hi-bg);color:var(--hi-fg);font-size:11px;padding:4px 8px;max-width:280px;line-height:1.35;display:none;z-index:5}
+#panel{border-left:1.5px solid var(--ink);display:flex;flex-direction:column;min-height:0}
+#tabs{display:flex;border-bottom:1.5px solid var(--ink)}
+#tabs button{flex:1;font:inherit;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:9px 6px;background:var(--paper);color:var(--ink);border:none;border-right:1.5px solid var(--ink);cursor:pointer}
+#tabs button:last-child{border-right:none}
+#tabs button.on{background:var(--hi-bg);color:var(--hi-fg)}
+#tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:-3px}
+#body{overflow-y:auto;padding:14px 18px 40px;flex:1}
+.eyebrow{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+h1.t{font-size:22px;font-weight:500;line-height:1.2;margin:2px 0 4px;text-wrap:balance}
+.lede{font-size:14.5px;line-height:1.5;margin:0 0 14px;max-width:56ch}
+.sub{color:var(--ink-2);font-size:11px;margin-bottom:14px}
+h3.sec{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:500;margin:20px 0 6px;padding-bottom:4px;border-bottom:1.5px solid var(--ink)}
+#body p{margin:0 0 12px;max-width:62ch}
+#body ul{margin:0 0 12px;padding-left:18px;max-width:62ch}
+#body li{margin-bottom:6px}
+mark{background:var(--hi-bg);color:var(--hi-fg);padding:0 3px}
+.chip{display:inline-block;border:1.5px solid var(--ink);padding:1px 6px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin:0 6px 6px 0;background:var(--paper);color:var(--ink);font-family:inherit;cursor:pointer}
+.chip.ghost{border-style:dashed;color:var(--ink-2)}
+.chip.static{cursor:default}
+pre{background:var(--face);border:1.5px solid var(--rule);padding:10px 12px;font-size:11px;line-height:1.45;overflow-x:auto;margin:0 0 12px;white-space:pre}
+.step{display:grid;grid-template-columns:24px 1fr;gap:8px;margin:0 0 8px;font-size:12px}
+.step .no{color:var(--ink-2);font-variant-numeric:tabular-nums}
+.step.cur .no{color:var(--ink);font-weight:600}
+.step.cur .tx{background:var(--face);outline:1.5px solid var(--ink);padding:2px 6px}
+.actions{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.pk{border:1.5px solid var(--ink);padding:10px 12px;margin:0 0 12px}
+.pk .lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.pk .route{font-size:12px;margin:2px 0 8px}
+details{border-top:1.5px solid var(--rule);margin:8px 0 0;padding:6px 0 0}
+details summary{cursor:pointer;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);list-style:none;display:flex;gap:8px;align-items:center}
+details summary::before{content:'+';display:inline-block;width:12px;color:var(--ink)}
+details[open] summary::before{content:'−'}
+details summary::-webkit-details-marker{display:none}
+details > *:not(summary){margin-top:8px}
+#hint{border-top:1.5px solid var(--ink);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;padding:0 14px;gap:14px;overflow:hidden;white-space:nowrap}
+.q{padding-left:0;list-style:none}
+.q li{position:relative;padding-left:18px}
+.q li::before{content:'?';position:absolute;left:0;top:0;color:var(--ink-2)}
+.q li.res::before{content:'✓'}
+.q li.to::before{content:'→'}
+.q li.res>span,.q li.to>span{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--rule)}
+.q li.to>span{text-decoration:none}
+.q .ans{margin-top:2px;padding-left:10px;border-left:1.5px solid var(--ink)}
+@keyframes halo{0%{opacity:.9}50%{opacity:.25}100%{opacity:.9}}
+.halo{animation:halo 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.halo{animation:none}}
+@media (max-width:1100px){#main{grid-template-columns:200px 1fr 360px}}
+</style>
+
+<div id="app">
+  <div id="top">
+    <div id="stats" style="display:flex;min-width:0;flex:1"></div>
+    <div id="controls">
+      <button class="ctl" id="btnBack">◂ Back</button>
+      <button class="ctl primary" id="btnNext">Next ▸</button>
+      <button class="ctl" id="btnFlow">‖ Pause</button>
+      <button class="ctl" id="btnStep">Trace one step</button>
+      <button class="ctl" id="btnReset">Refit</button>
+    </div>
+  </div>
+  <div id="main">
+    <nav id="index" aria-label="Structures"></nav>
+    <div id="canvasWrap">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-width="1.1"/></pattern>
+          <pattern id="hatchLight" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width=".8" opacity=".55"/></pattern>
+        </defs>
+        <g id="world"></g>
+      </svg>
+      <div id="rail"></div>
+      <div id="flowSel"></div>
+      <div id="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button></div>
+      <div id="tip"></div>
+    </div>
+    <aside id="panel">
+      <div id="tabs">
+        <button data-tab="what" class="on">What it does</button>
+        <button data-tab="how">How it's built</button>
+        <button data-tab="cond">Open questions</button>
+      </div>
+      <div id="body"></div>
+    </aside>
+  </div>
+  <div id="hint">
+    <span>enter / ] next chapter</span><span>[ back</span><span>hover to read</span><span>click to pin</span><span>→ go inside</span><span>← come out</span><span>click a dot to inspect its packet</span>
+  </div>
+</div>
+
+<script>
+const GROUPS = [{"id":"globe","title":"The globe"},{"id":"hud","title":"The console"},{"id":"data","title":"Live signals"},{"id":"voice","title":"Talk to it"},{"id":"keys","title":"Keys and proxy"},{"id":"off","title":"Designed for, not on"}];
+const NODES = [{"id":"HUD","code":"HUD","name":"Operator HUD","short":"HUD","group":"hud","gx":1,"gy":8,"w":2,"d":2,"h":44,"kind":"screen","one":"The glass cockpit around the globe — panels, keys, share links.","what":"Left rail is Data Layers and Scenes. Right rail is DISPLAY, CCTV, and CONTEXT. Bottom is visual presets, the mic, and status chips. Share links serialize camera, style, layers, and one tracked target into the URL hash.","how":"<code>src/ui.js</code> <mark>StyleManager</mark> plus <code>src/hud.js</code>. Keyboard <code>1</code>–<code>7</code> styles, <code>H</code> HUD, <code>D</code> detection, <code>C</code> cockpit. First-run missions live in <code>src/firstRunExperience.js</code>. Share codec is <code>src/sharelink.js</code> / <code>src/data/layerState.js</code>.","steps":[["Boot","StyleManager attaches to the Cesium viewer and the map-stack controller."],["Chrome","Build left accordion, right DISPLAY/CCTV/CONTEXT rail, and the HUD overlay."],["Restore","If a share hash or gev:layer-state:v2 snapshot exists, restore it; else first-run defaults."],["Facade","setHud / setDetection / setMapStack / setVisualStyle return {ok, ...state} so voice only confirms what happened."]],"cond":[{"q":"Where does the operator chrome live?","r":"StyleManager in src/ui.js, with the intelligence readout in src/hud.js (2026-08-25)."},"HUD layout and panel collapse state in this browser (v6 collapse keys, v8 positions)."]},{"id":"CK","code":"CK","name":"Cockpit","short":"COCKPIT","group":"hud","gx":1,"gy":4,"w":2,"d":2,"h":40,"kind":"screen","one":"Ride inside a tracked flight. The terrain holds underneath you.","what":"First-person camera from the delayed, interpolated track. Visor HUD, contacts window, briefing carousel. Not WebXR. Entry is gated: Contacts mode on, both flight layers on, a civilian or military aircraft tracked.","how":"Cockpit modules under <code>src/cockpit*.js</code> plus camera handoff in the flight layers. Vision cycle is inherited map preset, CRT, NVG, FLIR, NOIR. Opt-in WX clouds are a capped WebGL pass (<code>src/cockpitCloudEffects.js</code>), default off.","steps":[["Gate","Contacts active, flights + military enabled, an aircraft tracked."],["Enter","Release Cesium orbit-follow; drive a first-person camera from the displayed track."],["Ride","Instruments at 10 Hz, camera at 20 Hz; detection stays owned by Contacts."],["Exit","C, Escape, or EXIT COCKPIT restores the follow camera on the same contact."]],"cond":[{"q":"Is Cockpit a WebXR session?","r":"No. Desktop first-person presentation, not WebXR (2026-08-25)."}]},{"id":"DT","code":"DT","name":"Detection","short":"DETECT","group":"hud","gx":1,"gy":0,"w":2,"d":2,"h":40,"kind":"screen","one":"Screen-space boxes and IDs on everything in view.","what":"Samples enabled layers through getDetectableObjects and paints brackets from the shared world-overlay post-render callback so boxes match the final camera frame. First-run default is Dense at 75%. CRT/NVG/FLIR auto-apply that preset until you override.","how":"<code>src/data/detection.js</code> + <code>detectionDraw.js</code> + <code>labelArbiter.js</code>. Takes <mark>no continuous-render hold</mark> — it asks for one more frame while fade/solve work is outstanding (<code>detectionRenderDemand.js</code>).","steps":[["Sample","Each enabled layer that implements getDetectableObjects reports objects in view."],["Solve","Label arbiter allocates quotas (ELASTIC default, or WEIGHTED)."],["Paint","One post-render callback draws brackets and labels."],["Idle","No hold: a parked scene with detection on costs zero extra frames."]],"cond":[{"q":"Does detection pin the render loop at 60 fps?","r":"No. It takes no continuous-render hold; measured 0 renders / 5 s with detection on a parked empty scene (2026-08-22)."}]},{"id":"GL","code":"GL","name":"Cesium globe","short":"GLOBE","group":"globe","gx":6,"gy":5,"w":2.6,"d":2.4,"h":50,"kind":"box","one":"The Cesium viewer. One tab, no framework, 60 fps cap.","what":"CesiumJS Viewer with all default chrome stripped. The engine globe is hidden so Google tiles can be the planet. A render governor idles the scene unless something is animating. Hidden tabs stop the loop.","how":"<code>src/main.js</code> <mark>new Cesium.Viewer</mark>. <code>src/renderGovernor.js</code> flips requestRenderMode. <code>src/scopeMask.js</code> is the circular keyhole (DISPLAY SCOPE + FEATHER). Attribution stays visible — Google ToS.","steps":[["Create","Viewer in #cesiumContainer; targetFrameRate 60."],["Hide globe","scene.globe.show = false so 2D imagery does not clip 3D buildings."],["Wire","Map stack, StyleManager, DataLayerManager, scenes, annotations, voice."],["Idle","Install the render governor after every module has registered holds."]],"cond":[{"q":"Is there a React/Vue/Svelte app around this?","r":"No. Vanilla JS + CesiumJS + Vite (2026-08-25)."}]},{"id":"TL","code":"TL","name":"Photoreal tiles","short":"3D TILES","group":"globe","gx":11,"gy":1.4,"w":3,"d":3,"h":64,"kind":"tall","one":"Google Photorealistic 3D Tiles — the actual planet.","what":"This is the required key. Map Tiles API draws street-to-orbit photogrammetry. If tiles fail to load, the app continues on the Cesium globe / OSM rather than dying. Cesium World Terrain is intentionally off — it fights the Google mesh.","how":"<code>Cesium.createGooglePhotorealistic3DTileset</code> in <code>src/main.js</code>. Key via <code>import.meta.env.GOOGLE_MAPS_API_KEY</code> (Vite <code>define</code>). Also copied to <code>window.__GOOGLE_MAPS_API_KEY__</code> for geocoding.","steps":[["Key","GOOGLE_MAPS_API_KEY must be set or init throws."],["Load","createGooglePhotorealistic3DTileset; add to scene.primitives."],["Fallback","On failure, show the Cesium globe and start the map stack on OSM."]],"cond":[{"q":"Does the app run without a Google Maps key?","r":"No. src/main.js throws if GOOGLE_MAPS_API_KEY is missing (2026-08-25)."},"Production Map Tiles billing, quotas, and referrer restrictions for a given deploy."]},{"id":"ST","code":"ST","name":"Sensor looks","short":"STYLES","group":"globe","gx":16,"gy":2.6,"w":2.6,"d":2.4,"h":48,"kind":"box","one":"GLSL post-process looks: CRT, NVG, FLIR, anime, noir, snow.","what":"The whole live planet re-renders through a different sensor. Keys 1–7. Military looks (CRT/NVG/FLIR) auto-enable Dense detection until you override. FLIR can switch to an Ironbow palette.","how":"<code>src/styles/</code> fragment shaders imported by <code>src/ui.js</code> STYLES: retro, surveillance (NVG), thermal (FLIR), anime, noir, snow. Cesium post-process stages; intensity crossfades in StyleManager.","steps":[["Pick","Key 1–7 or set_visual_style / the presets tray."],["Stage","Activate the matching Cesium post-process; uniforms from STYLE_PRESET_DEFAULTS."],["Detect","CRT/NVG/FLIR apply MILITARY_DETECTION_PRESET unless _detectionUserOverridden."]],"cond":[]},{"id":"MS","code":"MS","name":"Map stacks","short":"MAP SOURCE","group":"globe","gx":18,"gy":-0.4,"w":2.2,"d":2.2,"h":40,"kind":"box","one":"The basemap under the layers: Google 3D, Bing, or OSM.","what":"Four tiles in Visual Presets. Photoreal is default. Bing Aerial / Labels need a public Cesium ion token. OSM is keyless. Bing Road is retired — old map=bing-road links fall back to photoreal.","how":"<code>src/mapStackController.js</code> + <code>src/mapStackChips.js</code>. Share-link, voice set_map_stack, and the chip row all call the same _setMapStack(). Ion chips stay visible but aria-disabled without a token.","steps":[["Default","photoreal if Google tiles loaded; else osm."],["Switch","Chip / voice / share hash → setStack."],["Fail","Rejected ion switch leaves the genuinely active source lit."]],"cond":[{"q":"Is Bing Road still a stack?","r":"No. Retired from MAP_STACKS and from the set_map_stack enum; road phrasings resolve to OSM (2026-08-25)."},"Whether this install has CESIUM_ION_TOKEN (Bing stacks)."]},{"id":"LM","code":"LM","name":"Layer manager","short":"MANAGER","group":"data","gx":9.4,"gy":6.6,"w":2,"d":2,"h":42,"kind":"gate","one":"The gate that turns a layer on and off without double-polling.","what":"Registers every production layer, seals the 16-id registry, and serializes visibility so two rapid toggles cannot arm two OpenSky intervals. Feed chips read getStats through one honest state machine: ON / LOADING / DEGRADED / STALE / FALLBACK / UNAVAILABLE.","how":"<code>src/data/manager.js</code> DataLayerManager. Enable path: <mark>init → enable → first update → interval</mark>. destroy() on teardown. Share restoration waits until finalizeRegistrations(LAYER_STATE_REGISTRY).","steps":[["Register","main.js registers 16 modules then finalizeRegistrations."],["Intent","User / voice / tool setEnabled with a monotonic epoch; newer aborts older."],["Lifecycle","init (once), enable, update, arm interval; disable clears the timer."],["Stats","layerFeedState(getStats()) drives the row chip."]],"cond":[{"q":"How many production layers are sealed?","r":"16 ids in LAYER_STATE_REGISTRY, including military-awareness which is not a user-visible Data Layers row (2026-08-25)."}]},{"id":"LY","code":"LY","name":"Live layers","short":"LAYERS","group":"data","gx":5,"gy":10.4,"w":3,"d":3,"h":24,"kind":"store","one":"The public signals: flights, ships, sats, quakes, traffic, fires, radio, more.","what":"Fifteen user-visible overlays besides CCTV, each a src/data module with its own source and cadence. Flights interpolates one poll behind real time. AIS is a server websocket the browser polls. FIRMS and TomTom are key-gated; without a key the row says so (KEY REQUIRED / SIMULATED). Bundled datacenters, dams, and cables are static extracts.","how":"flights (OpenSky 30s + adsb.lol fallback), military (adsb.lol 15s), ais-live-vessels (AISStream via /api/ais-live), satellites (CelesTrak), rocket-launches (Launch Library 2), earthquakes (USGS 60s, no proxy), traffic (Overpass ± TomTom), radio, bikeshare, installations, local-datacenters, local-dams, telegeography-submarine-cables, local-firms (NASA FIRMS live). Contacts mode owns the awareness coordinator.","steps":[["Enable","Manager init/enable/update; first fetch through the matching /api/* proxy or USGS."],["Reconcile","Keyed records (ICAO, MMSI, NORAD) survive refreshes; stale contacts fade then evict."],["Draw","Billboards / models / ellipses / heat on the Cesium scene; detection samples getDetectableObjects."],["Context","CONTACTS or SPACE MISSIONS can own a subset and restore the prior snapshot on exit."]],"cond":[{"q":"Are FIRMS fires still a bundled snapshot?","r":"No. local-firms is live NASA FIRMS via /api/firms; the id keeps a local- prefix for persistence (2026-08-25)."},"Which optional keys this install has (AISStream, FIRMS, TomTom, OpenSky OAuth) and which layers the operator has enabled."]},{"id":"CV","code":"CV","name":"CCTV","short":"CCTV","group":"data","gx":9.2,"gy":11.2,"w":2.6,"d":2.6,"h":22,"kind":"box","one":"Public cameras projected into the 3D city — not webcam embeds.","what":"Austin, Caltrans (CA), and TfL London stills, with Street View as a fallback frame. VIEWSHED draws each camera's estimated coverage volume. The proxy will not fetch a URL the client invented.","how":"<code>src/data/cctv.js</code> + viewshed/gizmo/LOD helpers. Frames via <mark>/api/cctv</mark> (server allowlist, 8s abort). Source packs in <code>config/cctv_sources.*.json</code>. Calibration persists at godsEyeView.cctv.calibration.v2.","steps":[["Enable","Manager lifecycle; registry from the server-side source pack."],["Fetch","Same-origin /api/cctv stills on an 8s timeout."],["Project","Drape the frame onto the photoreal mesh at the camera pose."],["Viewshed","Optional coverage volume; click-to-track can hand off from a fire or vessel."]],"cond":[{"q":"Can the browser point the CCTV proxy at an arbitrary URL?","r":"No. Client-specified upstream URLs are rejected; only the server allowlist is fetched (2026-08-25)."},"Which CCTV_SOURCES_FILE / city pack this deploy uses (Austin is the reference; Shinjuku exists in tree)."]},{"id":"VC","code":"VC","name":"Voice","short":"GEV MIC","group":"voice","gx":14,"gy":8.2,"w":2.6,"d":2,"h":28,"kind":"box","one":"Twenty-eight tools. It knows what it is looking at.","what":"OpenAI Realtime over WebRTC. The agent pulls live scene context before answering. Without an OpenAI key the mic reports unavailable and the globe still runs. In-app session cap $5; in-flight tools complete rather than roll back.","how":"Schemas in <code>vite.config.js</code> <mark>GEV_REALTIME_TOOLS</mark>. Execution in <code>src/voice/gevActions.js</code>. Session in <code>src/voice/gevRealtime.js</code>. Token: GET /api/realtime/token → ephemeral client secret. Cost in <code>src/voice/voiceCost.js</code>.","steps":[["Mint","Browser asks /api/realtime/token; middleware holds OPENAI_API_KEY."],["Connect","WebRTC SDP to api.openai.com with the ephemeral token."],["Tool","Model emits a function call; gevActions runs it on StyleManager / layers / camera."],["Confirm","Spoken confirmation only on ok:true. Cap trips stop(); in-flight mutations finish."]],"cond":[{"q":"Does the browser see OPENAI_API_KEY?","r":"No. Vite middleware mints ephemeral Realtime client secrets at /api/realtime/token (2026-08-25)."},{"q":"How many voice tools?","r":"28, listed in CURRENT-STATE and GEV_REALTIME_TOOLS (2026-08-25)."},"Whether this install has OPENAI_API_KEY, and which realtime model id OpenAI currently serves."]},{"id":"AN","code":"AN","name":"Annotations","short":"WHITEBOARD","group":"voice","gx":14.2,"gy":12.2,"w":2.2,"d":2.2,"h":36,"kind":"box","one":"Speak a mark, a polygon, or a walking route onto the world.","what":"Voice whiteboard. Marks accumulate until you clear them. Cap 120 live marks. Routes can be flown with fly_route. Known gap: mall/lifestyle districts can prefer a named building over the broader envelope.","how":"<code>src/annotations/annotationEngine.js</code> + resolver + hybrid renderer (world-space areas/routes, screen-space pins). Tools: annotate_map, clear_annotations. Routes via /api/route (OSRM proxy).","steps":[["Resolve","Name / coords / pixels → world anchor (Geocode, Places, Overpass, OSRM)."],["Draw","Draped geometry in Cesium; reticles and callouts in SVG."],["Cap","Hard cap 120; clear is explicit only."]],"cond":["Mall/lifestyle district scoring still prefers some named buildings over the retail envelope (CURRENT-STATE known resolver gap)."]},{"id":"PX","code":"PX","name":"Vite proxy","short":"PROXY","group":"keys","gx":17.6,"gy":7.6,"w":3,"d":2,"h":22,"kind":"store","one":"Where the secrets live. The browser never holds the private keys.","what":"vite.config.js is both the bundler and the API. Same-origin /api/* routes cache, rate-limit, and sanitize upstream calls. AISStream websocket, OpenSky OAuth, FIRMS, TomTom, CCTV allowlist, Realtime token mint — all here. Default bind is localhost.","how":"<code>vite.config.js</code> plugins: openSky, celestrak, tomtom, firms, launches, terrain, adsbdb, overpass, installations, regionalBrief, weather, cctv, radio, gbfs, adsbLol, aisLive, tracks, openAiRealtime, googlePlaces. <code>define</code> injects only GOOGLE_MAPS_API_KEY and CESIUM_ION_TOKEN.","steps":[["Env",".env / Keychain / shell. Empty string is not unset — the launcher env -u's it."],["Broker","Browser calls /api/*; middleware adds auth and cache."],["Mint","/api/realtime/token returns an ephemeral client secret, not OPENAI_API_KEY."],["Bind","localhost unless HOST=0.0.0.0 (LAN warning: keys are reachable)."]],"cond":[{"q":"Which keys reach the browser bundle?","r":"GOOGLE_MAPS_API_KEY and CESIUM_ION_TOKEN via Vite define; OpenAI/AIS/FIRMS/TomTom stay server-side; voice uses ephemeral tokens (2026-08-25)."},"How maptheworld.ai is hosted — this repo has no production deploy workflow, Dockerfile, or replica topology.","Concurrent replicas behind one origin (Radio catalogInstance assumes a single-process dev server; out of scope in CURRENT-STATE)."]},{"id":"SC","code":"SC","name":"Scene director","short":"SCENES","group":"hud","gx":11.2,"gy":13.4,"w":2.2,"d":2.2,"h":32,"kind":"box","one":"Cinematic camera tours for clips and demos.","what":"Deterministic scene playback. While a scene runs, Clear Selected Layers and Reset Globe stay hidden because the transport owns camera and layers. Voice control_scene lists, plays, and stops.","how":"<code>src/scenes/director.js</code> + <code>src/scenes/recipes.js</code> + <code>scenePolicy.js</code>. Constructed in main.js as SceneDirector(viewer, styleManager, dataManager).","steps":[["Pick","A recipe from the Scenes panel or control_scene."],["Play","Director sequences camera and declared layers; undeclared layers are left alone."],["Stop","Transport releases; Clear / Reset Globe return."]],"cond":[]},{"id":"WX","code":"WX","name":"Later","short":"LATER","group":"off","ghost":true,"gx":5,"gy":-1.2,"w":2,"d":2,"h":36,"kind":"gate","one":"Designed-for, not on: weather radar, general replay, LiDAR.","what":"Weather radar was removed before OSS v1. There is no general timeline outside Space Missions ascent/orbit replay. LiDAR explorer and paired-point CCTV calibration are experiments, not runtime. Historical \"what happened\" tiling is called out as future work on halfpixel.ai — not this repo.","how":"<mark>Ghost</mark>. CURRENT-STATE § Not Currently in Runtime. Cockpit WX clouds are a separate opt-in pass and are not this node.","steps":[["Radar","Removed; no reliable visible payoff."],["Replay","Only Space Missions ascent/orbit exists; no general scrubber."],["LiDAR","Calibration experiments, not shipped."]],"cond":["Whether historical replay (halfpixel.ai) will land in this repo or a separate product."]}];
+const FLOWS = [{"id":"boot","name":"Cold start","hops":[["HUD","GL","init()",{"container":"cesiumContainer","targetFrameRate":60},"yx"],["GL","TL","createGooglePhotorealistic3DTileset",{"api":"Map Tiles","globeShow":false},"xy"],["TL","GL","primitives.add",{"tileset":"photoreal"},"xy"],["GL","LM","new DataLayerManager",{"seal":16},"xy"],["GL","HUD","StyleManager",{"style":"normal","hud":"tactical"},"xy"]]},{"id":"flights","name":"Enable flights","hops":[["HUD","LM","setEnabled",{"layerId":"flights","origin":"user","enabled":true},"yx"],["LM","LY","init → enable → update",{"layerId":"flights"},"xy"],["LY","PX","GET /api/opensky",{"mode":"oauth|anon","intervalS":30},"xy"],["PX","LY","state vectors",{"source":"OpenSky","delayed":true},"yx"],["LY","GL","billboards + models",{"interpolate":"one poll behind"},"xy"],["LY","DT","getDetectableObjects",{"type":"AIR"},"xy"]]},{"id":"voice","name":"Voice turn","hops":[["HUD","PX","GET /api/realtime/token",{"tier":"standard"},"yx"],["PX","VC","ephemeral client_secret",{"model":"gpt-realtime-2"},"xy"],["VC","HUD","get_current_view_state",{"style":"thermal","layers":["flights"]},"yx"],["VC","LM","set_layer_visibility",{"layerId":"flights","enabled":true},"xy"],["VC","GL","fly_to_location",{"query":"LAX","waitForArrival":true},"xy"],["VC","HUD","spoken confirm",{"ok":true,"text":"Flights on. At LAX."},"xy"]]},{"id":"cctv","name":"Project a camera","hops":[["HUD","LM","setEnabled",{"layerId":"cctv","origin":"user","enabled":true},"yx"],["LM","CV","init → enable → update",{"pack":"austin"},"xy"],["CV","PX","GET /api/cctv",{"allowlist":true,"timeoutMs":8000},"xy"],["PX","CV","still frame",{"source":"Austin Open Data"},"yx"],["CV","GL","project into mesh",{"viewshed":"optional"},"xy"]]},{"id":"cockpit","name":"Ride a contact","hops":[["LY","CK","track + COCKPIT",{"icao24":"a1b2c3","gate":"contacts"},"yx"],["CK","GL","first-person camera",{"from":"interpolated track","hz":20},"xy"],["CK","ST","vision cycle",{"cycle":["inherited","CRT","NVG","FLIR","NOIR"]},"xy"],["CK","HUD","EXIT COCKPIT",{"restore":"follow camera"},"xy"]]}];
+const CH = [{"id":"you","title":"You open the globe","reveal":["HUD","GL","TL"],"lede":"A page, a Cesium viewer, and Google 3D tiles.","story":"<p>Strip everything away and this is GEV: a browser tab and a planet. <code>src/main.js</code> builds a chrome-less Cesium viewer, hides the default globe, and loads <mark>Google Photorealistic 3D Tiles</mark>. The Maps key is required. The operator HUD is StyleManager in <code>src/ui.js</code>.</p>","flow":[["HUD","GL","init()",{"container":"cesiumContainer","targetFrameRate":60}],["GL","TL","createGooglePhotorealistic3DTileset",{"api":"Map Tiles"}],["TL","GL","primitives.add",{"tileset":"photoreal"}]]},{"id":"looks","title":"Reskin reality","reveal":["ST","MS","SC"],"lede":"GLSL sensor looks over a chosen basemap.","story":"<p>Keys <code>1</code>–<code>7</code> restyle the live planet: CRT, NVG, FLIR, anime, noir, snow. The Visual Presets tray also picks the <mark>map source</mark> — Google 3D, Bing (ion token), or OSM. Bing Road is retired. The scene director is a cinematic tour for clips; while one runs, Reset Globe stays hidden.</p>","flow":[["HUD","ST","set_visual_style",{"style":"thermal"}],["HUD","MS","set_map_stack",{"stack":"photoreal"}]]},{"id":"sky","title":"Light up the sky","reveal":["LM","LY"],"lede":"The manager turns a public feed into moving marks.","story":"<p>Sixteen production layers are sealed at boot. Enable is <mark>init → enable → first update</mark>, then a poll interval. Flights interpolate one interval behind real time on purpose. AIS is a server websocket the browser polls. Keyless traffic is labeled SIMULATED.</p>","flow":[["HUD","LM","setEnabled",{"layerId":"flights","origin":"user","enabled":true}],["LM","LY","init → enable → update",{"layerId":"flights"}],["LY","PX","GET /api/opensky",{"intervalS":30}],["LY","GL","billboards",{"interpolate":"one poll behind"}]]},{"id":"cam","title":"Look through a camera","reveal":["CV"],"lede":"Public stills project into the 3D city.","story":"<p>CCTV is not a webcam embed. Austin, Caltrans, and TfL frames drape onto the photoreal mesh. The proxy <mark>refuses client-supplied URLs</mark> — only the server allowlist is fetched. VIEWSHED draws where each camera reaches, and where it goes blind.</p>","flow":[["HUD","LM","setEnabled",{"layerId":"cctv","enabled":true}],["LM","CV","init → enable → update",{"pack":"austin"}],["CV","PX","GET /api/cctv",{"allowlist":true}],["CV","GL","project into mesh",{"viewshed":true}]]},{"id":"detect","title":"Detection","reveal":["DT"],"lede":"Boxes on everything in view, without pinning the GPU.","story":"<p>Detection samples <code>getDetectableObjects</code> and paints from the shared post-render callback. First-run default is Dense at 75%. It takes <mark>no continuous-render hold</mark> — a parked empty scene with detection on costs zero extra frames.</p>","flow":[["LY","DT","getDetectableObjects",{"type":"AIR"}],["DT","GL","postRender brackets",{"hold":false}]]},{"id":"pit","title":"Ride a plane","reveal":["CK"],"lede":"Contacts-gated first-person. Not WebXR.","story":"<p>Cockpit is gated: CONTEXT ▸ CONTACTS, both flight layers on, an aircraft tracked. The camera rides the delayed track with the terrain held underneath. Vision cycles CRT / NVG / FLIR without leaving the seat. <mark>Detection stays owned by Contacts</mark>, not by Cockpit.</p>","flow":[["LY","CK","COCKPIT",{"icao24":"a1b2c3","gate":"contacts"}],["CK","GL","first-person camera",{"hz":20}],["CK","ST","vision cycle",{"style":"NVG"}]]},{"id":"talk","title":"Talk to it","reveal":["VC","AN"],"lede":"Twenty-eight tools. The key never enters the tab.","story":"<p>GEV MIC mints an ephemeral Realtime token from <code>/api/realtime/token</code>. Tools are declared in <code>vite.config.js</code> and executed in <code>gevActions.js</code>. The agent confirms only <mark>ok:true</mark>. Speak a polygon onto the world — annotations cap at 120. Without an OpenAI key the globe still runs.</p>","flow":[["HUD","PX","GET /api/realtime/token",{"tier":"standard"}],["PX","VC","ephemeral client_secret",{"model":"gpt-realtime-2"}],["VC","GL","fly_to_location",{"query":"LAX"}],["VC","AN","annotate_map",{"type":"area"}]]},{"id":"keys","title":"Keys stay on the server","reveal":["PX"],"lede":"The Vite proxy is the API. Localhost by default.","story":"<p>Private keys never ship in the bundle. The browser sees the Maps key, an optional Cesium ion token, and short-lived OpenAI secrets. Everything else — AISStream, FIRMS, TomTom, OpenSky OAuth — is brokered at <code>/api/*</code>. Binding to <mark>0.0.0.0 brokers those keys to the LAN</mark>.</p>","flow":[["LY","PX","GET /api/opensky",{"intervalS":30}],["CV","PX","GET /api/cctv",{"allowlist":true}],["HUD","PX","GET /api/realtime/token",{}]]},{"id":"later","title":"Later","reveal":["WX"],"lede":"Weather radar, general replay, and LiDAR are designed-for, not on.","story":"<p>Weather radar was removed before OSS v1. There is no general timeline outside Space Missions ascent/orbit. LiDAR explorer and paired-point CCTV calibration are experiments. Historical replay of what happened is <mark>not this repo</mark>.</p>","flow":[["WX","GL","not in runtime",{"weatherRadar":false,"generalReplay":false,"lidar":false}]]},{"id":"all","title":"The whole system","reveal":[],"lede":"Everything at once, for free exploration.","story":"<p>Choose which flow runs (bottom left). Hover anything; click to pin; → goes inside. The <mark>Open questions</mark> tab lists every operator fact this repo cannot answer — including how maptheworld.ai is hosted.</p>","flow":null}];
+const HOW_HTML = "<div class=\"eyebrow\">GEV · public main</div><h1 class=\"t\">How it's built</h1><div class=\"sub\">the shape and what sits around it</div>\n<h3 class=\"sec\">Filesystem</h3>\n<pre>src/\n  main.js               Cesium viewer + Google tiles + wiring\n  ui.js                 StyleManager: HUD, styles, panels, share links\n  hud.js                intelligence HUD\n  camera.js · cameraVerbs.js\n  mapStackController.js photoreal / Bing / OSM\n  sharelink.js\n  renderGovernor.js · scopeMask.js\n  styles/               GLSL: CRT, NVG, FLIR, anime, noir, snow\n  data/\n    manager.js          layer lifecycle\n    flights.js · militaryFlights.js · aisLiveVessels.js\n    satellites.js · earthquakes.js · traffic.js · cctv.js\n    radio.js · bikeshare.js · rocketLaunches.js\n    militaryInstallations.js · militaryAwareness.js\n    localLayers.js      datacenters, dams, cables, FIRMS\n    detection.js · trackedReadout.js · layerState.js\n    local_data/         bundled datasets (own licenses)\n  voice/                OpenAI Realtime + gevActions.js\n  annotations/          voice whiteboard\n  scenes/               cinematic director\n  cockpit*.js\nvite.config.js          proxies + GEV_REALTIME_TOOLS + client-exposed keys\nindex.html · style.css\ndocs/CURRENT-STATE.md   runtime source of truth</pre>\n<p>No framework. Vanilla JS + CesiumJS + Vite. <code>docs/CURRENT-STATE.md</code> wins when docs conflict.</p>\n<h3 class=\"sec\">Secrets</h3>\n<p>The browser bundle sees <mark>GOOGLE_MAPS_API_KEY</mark> and optional <mark>CESIUM_ION_TOKEN</mark>. <code>OPENAI_API_KEY</code>, AISStream, FIRMS, TomTom, and OpenSky OAuth stay in the Vite middleware. Voice gets an ephemeral client secret from <code>/api/realtime/token</code>.</p>\n<h3 class=\"sec\">Two kinds of layer</h3>\n<p>Most overlays are poll-or-static modules behind <code>DataLayerManager</code>. <mark>CCTV is different</mark>: public stills are projected into the photoreal mesh, and the proxy refuses client-supplied URLs. <code>military-awareness</code> is registered but is not a Data Layers row — Contacts mode is its entry.</p>";
+const DECISIONS_HTML = "<li><b>Runtime.</b> Vanilla JS + CesiumJS + Vite. No framework. One browser tab is the process.</li><li><b>Globe.</b> Google Photorealistic 3D Tiles are the planet; the default Cesium globe is hidden. Map Tiles API key is required.</li><li><b>Layers.</b> One module per layer. DataLayerManager owns init → enable → update → disable → destroy and getStats. Sixteen production ids are sealed against LAYER_STATE_REGISTRY.</li><li><b>Secrets.</b> Vite proxy holds private keys. The browser sees GOOGLE_MAPS_API_KEY, optional CESIUM_ION_TOKEN, and ephemeral OpenAI client secrets — nothing else.</li><li><b>Voice.</b> Twenty-eight tools are declared server-side in GEV_REALTIME_TOOLS and executed client-side in gevActions.js. OPENAI_API_KEY never touches the browser.</li><li><b>Honesty.</b> Flights interpolate one poll interval behind real time. Keyless traffic is SIMULATED. Launch ascent without telemetry is a RECONSTRUCTED ESTIMATE. Each layer keeps source and freshness visible.</li><li><b>Scope.</b> The product models events, assets, infrastructure, and systems. Named-person search, face recognition, and tracking individuals are out of scope.</li><li><b>Bind.</b> Dev server binds localhost by default. LAN is an explicit HOST=0.0.0.0 opt-in and brokers every configured key to anyone who can reach the process.</li><li><b>License.</b> MIT covers source only. Bundled datasets and live feeds keep their own terms (notably TeleGeography CC BY-NC-SA).</li>";
+const STATS = [{"k":"System","v":"gev · public main"},{"k":"Layers","v":"16"},{"k":"Voice tools","v":"28"}];
+const TITLE = "GEV";
+
+/* ---------------- CHAPTERS (progressive disclosure) ---------------- */
+/* ---------------- ISO ---------------- */
+const TW=72, TH=36;
+function P(gx,gy,z=0){ return [(gx-gy)*TW/2, (gx+gy)*TH/2 - z]; }
+function pts(a){ return a.map(p=>p.join(',')).join(' '); }
+const byId = Object.fromEntries(NODES.map(n=>[n.id,n]));
+const center = n => [n.gx+n.w/2, n.gy+n.d/2];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},...kids)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);kids.forEach(k=>e.appendChild(k));return e;};
+const qOpen=n=>(n.cond||[]).filter(c=>!c.r&&!c.to).length; const qHtml=list=>`<ul class="q">${list.map(c=>c.r?`<li class="res"><span>${c.q}</span><div class="ans">✓ ${c.r}</div></li>`:c.to?`<li class="to"><span>${c.q}</span><div class="ans">→ ${c.to}</div></li>`:`<li>${c.q}</li>`).join('')}</ul>`;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------------- STATE ---------------- */
+const S = { ch:0, view:'world', inside:null, selected:null, hover:null, tab:'what', playing:true, tx:0, ty:0, k:1, packets:[], selPacket:null, hoverPacket:null, flowSel:(typeof FLOWS!=='undefined'&&FLOWS[0]?FLOWS[0].id:'turn'), maxCh:0 };
+const svg=document.getElementById('svg'), world=document.getElementById('world'), tip=document.getElementById('tip'), body=document.getElementById('body');
+let sceneNodes=[], sceneHops=[];
+const revealedIds=()=>{ if(S.ch>=CH.length-1) return NODES.map(n=>n.id); const s=new Set(); for(let i=0;i<=S.ch;i++) CH[i].reveal.forEach(id=>s.add(id)); return [...s]; };
+const isNew=id=>S.ch<CH.length-1 && CH[S.ch].reveal.includes(id);
+const revealChapterOf=id=>{ for(let i=0;i<CH.length-1;i++) if(CH[i].reveal.includes(id)) return i; return CH.length-1; };
+
+/* ---------------- SCENES ---------------- */
+function buildWorldScene(){
+  const ids=new Set(revealedIds()); sceneNodes=NODES.filter(n=>ids.has(n.id)); sceneHops=[];
+  const c=CH[S.ch];
+  if(c.flow){ c.flow.forEach((h,i)=>{ let bend=bendFor(h[0],h[1]); const rev=c.flow.findIndex(x=>x[0]===h[1]&&x[1]===h[0]); if(rev>-1&&rev<i) bend=bend==='xy'?'yx':'xy'; sceneHops.push({flow:'ch',idx:i,from:h[0],to:h[1],label:h[2],payload:h[3],bend}); }); }
+  else { FLOWS.forEach(f=>{ if(S.flowSel!=='both'&&f.id!==S.flowSel)return; f.hops.forEach((h,i)=>sceneHops.push({flow:f.id,idx:i,from:h[0],to:h[1],label:h[2],payload:h[3],bend:h[4]||'xy'})); }); }
+}
+function bendFor(a,b){ const t=FLOWS[0].hops.find(h=>h[0]===a&&h[1]===b)||FLOWS[1].hops.find(h=>h[0]===a&&h[1]===b); return t?(t[4]||'xy'):'yx'; }
+function buildInsideScene(n){
+  const steps=n.steps||[]; sceneNodes=steps.map((s,i)=>({id:'s'+i,code:String(i+1),name:s[0],short:s[0],desc:s[1],gx:2+i*3.4,gy:2+i*0.6,w:2,d:2,h:34,inside:true}));
+  sceneHops=[]; for(let i=0;i<steps.length-1;i++) sceneHops.push({flow:'inside',idx:i,from:'s'+i,to:'s'+(i+1),label:steps[i][0]+' → '+steps[i+1][0],payload:{step:i+1,handsOff:steps[i+1][0]},bend:'xy'});
+}
+function hopPath(h){
+  const A=sceneNodes.find(n=>n.id===h.from), B=sceneNodes.find(n=>n.id===h.to); if(!A||!B) return null;
+  const [ax,ay]=center(A), [bx,by]=center(B); const mid = h.bend==='xy' ? [bx,ay] : [ax,by];
+  const g=[[ax,ay],mid,[bx,by]].filter((p,i,arr)=>i===0||p[0]!==arr[i-1][0]||p[1]!==arr[i-1][1]);
+  const scr=g.map(p=>P(p[0],p[1],0)); let len=0; const seg=[]; for(let i=1;i<scr.length;i++){const l=Math.hypot(scr[i][0]-scr[i-1][0],scr[i][1]-scr[i-1][1]);seg.push(l);len+=l;}
+  return {grid:g,scr,seg,len};
+}
+function pointAt(path,t){ let d=t*path.len; for(let i=0;i<path.seg.length;i++){ if(d<=path.seg[i]||i===path.seg.length-1){const u=path.seg[i]?Math.min(1,d/path.seg[i]):1;const a=path.scr[i],b=path.scr[i+1];return [a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u];} d-=path.seg[i]; } return path.scr[0]; }
+
+/* ---------------- RENDER ---------------- */
+function render(){
+  world.innerHTML='';
+  const gg=el('g',{opacity:.55}); const R=[-4,26];
+  for(let i=R[0];i<=R[1];i+=2){ const a=P(i,R[0]),b=P(i,R[1]);gg.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--grid)','stroke-width':.6})); const c=P(R[0],i),d=P(R[1],i);gg.appendChild(el('line',{x1:c[0],y1:c[1],x2:d[0],y2:d[1],stroke:'var(--grid)','stroke-width':.6})); }
+  world.appendChild(gg);
+  if(S.view==='world'&&S.ch>=CH.length-1){
+    const plate=(x0,y0,x1,y1,dash)=>{const p=el('polygon',{points:pts([P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)]),fill:'none',stroke:'var(--ink)','stroke-width':.9,opacity:.5});if(dash)p.setAttribute('stroke-dasharray','5 4');return p;};
+    world.appendChild(plate(0.5,1.5,17,10.5,false)); world.appendChild(plate(2,9,17.5,16.5,false)); world.appendChild(plate(-2,-2,24,17.5,true));
+  }
+  const hg=el('g'); world.appendChild(hg);
+  sceneHops.forEach(h=>{ h.path=hopPath(h); if(!h.path)return; const ghost=byId[h.from]?.ghost||byId[h.to]?.ghost;
+    const pl=el('polyline',{points:pts(h.path.scr),fill:'none',stroke:'var(--ink)','stroke-width':h.flow!=='turn'&&h.flow!=='ch'&&h.flow!=='inside'?1:1.4,opacity:(h.flow!=='turn'&&h.flow!=='ch'&&h.flow!=='inside')||ghost?.7:1});
+    if((h.flow!=='turn'&&h.flow!=='ch'&&h.flow!=='inside')||ghost)pl.setAttribute('stroke-dasharray','3 3'); hg.appendChild(pl);
+    h.path.scr.slice(1,-1).forEach(p=>hg.appendChild(el('polygon',{points:pts([[p[0],p[1]-3.5],[p[0]+3.5,p[1]],[p[0],p[1]+3.5],[p[0]-3.5,p[1]]]),fill:'var(--ink)'})));
+  });
+  const ng=el('g'); world.appendChild(ng);
+  [...sceneNodes].sort((a,b)=>(a.gx+a.gy+a.w+a.d)-(b.gx+b.gy+b.w+b.d)).forEach(n=>ng.appendChild(drawNode(n)));
+  const lg=el('g'); world.appendChild(lg); sceneNodes.forEach(n=>lg.appendChild(drawLabel(n)));
+  world.appendChild(el('g',{id:'pkts'})); drawPackets(); renderRail();
+}
+function drawLabel(n){
+  const g=el('g',{style:'pointer-events:none'});
+  const b=P(n.gx+n.w, n.gy+n.d, 0); const txt=(n.short||n.name).toUpperCase(); const w=txt.length*6.6+10; const y=b[1]+9;
+  const dim=n.ghost&&!n.inside;
+  g.appendChild(el('rect',{x:b[0]-w/2,y:y,width:w,height:14,fill:S.selected===n.id?'var(--hi-bg)':'var(--paper)',stroke:dim?'var(--ghost)':'var(--ink)','stroke-width':.9,'stroke-dasharray':dim?'3 2':'none'}));
+  const t=el('text',{x:b[0],y:y+10.5,'text-anchor':'middle','font-size':'9','font-family':'var(--mono)','letter-spacing':'.06em',fill:S.selected===n.id?'var(--hi-fg)':(dim?'var(--ink-2)':'var(--ink)'),'font-weight':'500'}); t.textContent=txt; g.appendChild(t);
+  return g;
+}
+function drawNode(n){
+  const g=el('g',{class:'node',style:'cursor:pointer','data-id':n.id});
+  const {gx,gy,w,d,h}=n; const sel=S.selected===n.id, hov=S.hover===n.id, fresh=!n.inside&&isNew(n.id);
+  const sw=sel?2:1.2, dash=n.ghost?'4 3':null, face=n.ghost?'none':'var(--face)';
+  const face3=(p,fill,hatch,extra={})=>{const poly=el('polygon',{points:pts(p),fill:fill,stroke:'var(--ink)','stroke-width':sw,'stroke-linejoin':'round',...extra});if(dash)poly.setAttribute('stroke-dasharray',dash);g.appendChild(poly);if(hatch&&!n.ghost){g.appendChild(el('polygon',{points:pts(p),fill:'url(#'+hatch+')',style:'color:var(--ink)',stroke:'none'}));}};
+  const box=(z0,z1,hatchTop)=>{ face3([P(gx,gy+d,z0),P(gx+w,gy+d,z0),P(gx+w,gy+d,z1),P(gx,gy+d,z1)],face,'hatch'); face3([P(gx+w,gy,z0),P(gx+w,gy+d,z0),P(gx+w,gy+d,z1),P(gx+w,gy,z1)],face,'hatch'); face3([P(gx,gy,z1),P(gx+w,gy,z1),P(gx+w,gy+d,z1),P(gx,gy+d,z1)],face,hatchTop||null); };
+  const kind=n.kind||'box';
+  if(kind==='store'){ const L=3, gap=3, lh=(h-gap*(L-1))/L; for(let i=0;i<L;i++){ const z0=i*(lh+gap); box(z0,z0+lh,null);} }
+  else if(kind==='cards'){ const L=5, lh=h/L; for(let i=0;i<L;i++) box(i*lh,(i+1)*lh,null); }
+  else if(kind==='slab'){ box(0,h,'hatchLight'); }
+  else if(kind==='screen'){ box(0,h,null); const inset=.3; if(!n.ghost){ const scr=[P(gx+inset,gy+inset,h),P(gx+w-inset,gy+inset,h),P(gx+w-inset,gy+d-inset,h),P(gx+inset,gy+d-inset,h)]; g.appendChild(el('polygon',{points:pts(scr),fill:'var(--paper)',stroke:'var(--ink)','stroke-width':.9})); for(let i=1;i<=3;i++){const a=P(gx+inset+.2,gy+inset+i*.4,h),b=P(gx+w-inset-.4-(i===3?.5:0),gy+inset+i*.4,h);g.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--ink)','stroke-width':.8,opacity:.7}));} } }
+  else if(kind==='gate'){ box(0,h,null); if(!n.ghost){ const z0=h*.55,z1=h*.75; const band=[[P(gx,gy+d,z0),P(gx+w,gy+d,z0),P(gx+w,gy+d,z1),P(gx,gy+d,z1)],[P(gx+w,gy,z0),P(gx+w,gy+d,z0),P(gx+w,gy+d,z1),P(gx+w,gy,z1)]]; band.forEach(p=>g.appendChild(el('polygon',{points:pts(p),fill:'var(--ink)',opacity:.85,stroke:'none'}))); } }
+  else if(kind==='tall'){ box(0,h,null); if(!n.ghost){ // roof ridge line on top to read as "the brain"
+      const c=P(gx+w/2,gy+d/2,h); const a=P(gx,gy+d,h),b=P(gx+w,gy,h); g.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--ink)','stroke-width':.8,opacity:.5})); } }
+  else if(kind==='job'){ box(0,h,'hatchLight'); }
+  else { box(0,h,null); }
+  const top=[P(gx,gy,h),P(gx+w,gy,h),P(gx+w,gy+d,h),P(gx,gy+d,h)];
+  if(sel||hov){ g.appendChild(el('polygon',{points:pts(top),fill:sel?'var(--ink)':'none',opacity:sel?.12:1,stroke:'var(--ink)','stroke-width':sel?2.5:1.8})); }
+  if(fresh&&!sel){ g.appendChild(el('polygon',{class:'halo',points:pts([P(gx-.35,gy-.35,0),P(gx+w+.35,gy-.35,0),P(gx+w+.35,gy+d+.35,0),P(gx-.35,gy+d+.35,0)]),fill:'none',stroke:'var(--ink)','stroke-width':1.4,'stroke-dasharray':'4 3'})); }
+  const c=P(gx+w/2,gy+d/2,h); const chipW=16;
+  g.appendChild(el('rect',{x:c[0]-chipW/2,y:c[1]-8,width:chipW,height:14,fill:sel?'var(--hi-bg)':'var(--paper)',stroke:'var(--ink)','stroke-width':1}));
+  const t=el('text',{x:c[0],y:c[1]+3,'text-anchor':'middle','font-size':'9','font-family':'var(--mono)',fill:sel?'var(--hi-fg)':'var(--ink)','font-weight':'600'}); t.textContent=n.code; g.appendChild(t);
+  g.addEventListener('mouseenter',e=>{S.hover=n.id;showTip(e,n);renderPanel();render();});
+  g.addEventListener('mousemove',e=>moveTip(e));
+  g.addEventListener('mouseleave',()=>{S.hover=null;hideTip();renderPanel();render();});
+  g.addEventListener('click',e=>{e.stopPropagation();select(n.id);});
+  g.addEventListener('dblclick',e=>{e.stopPropagation();if(!n.inside)goInside(n.id);});
+  return g;
+}
+
+/* ---------------- PACKETS ---------------- */
+function initPackets(){ S.packets=[]; const flows=[...new Set(sceneHops.map(h=>h.flow))]; flows.forEach(f=>S.packets.push({flow:f,hop:0,t:0,speed:.5,pause:0})); S.selPacket=null; }
+function hopsOf(flow){ return sceneHops.filter(h=>h.flow===flow); }
+function drawPackets(){
+  const pg=world.querySelector('#pkts'); if(!pg)return; pg.innerHTML='';
+  S.packets.forEach((p,i)=>{ const hs=hopsOf(p.flow); const h=hs[p.hop]; if(!h||!h.path)return; const [x,y]=pointAt(h.path,p.t);
+    const isSel=S.selPacket===i; const g=el('g',{class:'pkt',style:'cursor:pointer'});
+    if(isSel) g.appendChild(el('circle',{cx:x,cy:y,r:11,fill:'none',stroke:'var(--ink)','stroke-width':1.2,'stroke-dasharray':'2 2'}));
+    g.appendChild(el('circle',{cx:x,cy:y,r:5.5,fill:'var(--ink)',stroke:'var(--paper)','stroke-width':1.6}));
+    if(isSel||S.hoverPacket===i||S.ch<CH.length-1){ const lbl=el('text',{x:x+10,y:y-8,'font-size':'10','font-family':'var(--mono)',fill:'var(--ink)','font-weight':'500'}); lbl.textContent=h.label; g.appendChild(el('rect',{x:x+7,y:y-19,width:h.label.length*6.4+6,height:14,fill:'var(--paper)',stroke:'var(--ink)','stroke-width':.8})); g.appendChild(lbl); }
+    g.addEventListener('click',e=>{e.stopPropagation();S.selPacket=i;S.playing=false;syncFlowBtn();renderPanel();drawPackets();});
+    g.addEventListener('mouseenter',()=>{S.hoverPacket=i;drawPackets();});
+    g.addEventListener('mouseleave',()=>{S.hoverPacket=null;drawPackets();});
+    pg.appendChild(g);
+  });
+}
+let last=0;
+function tick(ts){ const dt=Math.min(.05,(ts-last)/1000||0); last=ts; tweenTick(); if(S.playing){ S.packets.forEach(p=>advance(p,dt)); drawPackets(); if(S.selPacket!=null) renderPanel(); } requestAnimationFrame(tick); }
+function advance(p,dt){ const hs=hopsOf(p.flow); if(!hs.length)return; if(p.pause>0){p.pause-=dt;return;} const h=hs[p.hop]; if(!h||!h.path){p.hop=(p.hop+1)%hs.length;return;} p.t+=dt*p.speed*(320/Math.max(120,h.path.len)); if(p.t>=1){p.t=0;p.hop=(p.hop+1)%hs.length;p.pause=(p.hop===0?1.2:.35);} }
+function stepOnce(){ S.playing=false; syncFlowBtn(); let i=S.selPacket??0; const p=S.packets[i]; if(!p)return; const hs=hopsOf(p.flow); p.hop=(p.hop+1)%hs.length; p.t=.5; p.pause=0; S.selPacket=i; drawPackets(); renderPanel(); }
+function syncFlowBtn(){ document.getElementById('btnFlow').textContent = S.playing?'‖ Pause':'▸ Play'; }
+requestAnimationFrame(tick);
+
+/* ---------------- PANEL ---------------- */
+function nodeChip(id){ const n=byId[id]; return `<button class="chip${n.ghost?' ghost':''}" onclick="select('${id}')">${esc(n.code)} · ${esc(n.name)}</button>`; }
+function renderPanel(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===S.tab));
+  if(S.selPacket!=null && S.packets[S.selPacket]){ const p=S.packets[S.selPacket]; const hs=hopsOf(p.flow); const h=hs[p.hop];
+    const A=sceneNodes.find(n=>n.id===h.from), B=sceneNodes.find(n=>n.id===h.to); const flowName=p.flow==='ch'?CH[S.ch].title:p.flow==='inside'?'inside '+byId[S.inside].name:(FLOWS.find(f=>f.id===p.flow)||{}).name;
+    body.innerHTML=`<div class="eyebrow">Data packet · ${esc(flowName)} · hop ${p.hop+1} of ${hs.length}</div><h1 class="t">${esc(h.label)}</h1>
+    <div class="pk"><div class="lbl">Route</div><div class="route">${esc(A.code)} ${esc(A.name)} &nbsp;→&nbsp; ${esc(B.code)} ${esc(B.name)}</div><div class="lbl">Payload (representative)</div><pre>${esc(JSON.stringify(h.payload,null,2))}</pre></div>
+    <p>Payload shapes are what the design implies, not measured traffic.</p>
+    <div class="actions"><button class="ctl" onclick="stepOnce()">Trace one step</button><button class="ctl" onclick="S.selPacket=null;S.playing=true;syncFlowBtn();renderPanel();drawPackets()">Release & play</button><button class="ctl" onclick="select('${esc(B.id)}')">Open ${esc(B.code)}</button></div>`; return; }
+  const id=S.selected??S.hover; const n=id?sceneNodes.find(x=>x.id===id):null;
+  if(!n){ renderChapterPanel(); return; }
+  if(n.inside){ const parent=byId[S.inside]; const i=+n.id.slice(1);
+    body.innerHTML=`<div class="eyebrow">Inside ${esc(parent.code)} · ${esc(parent.name)} · step ${i+1} of ${parent.steps.length}</div><h1 class="t">${esc(n.name)}</h1><p class="lede">${esc(n.desc)}</p>
+    <h3 class="sec">All steps</h3>${parent.steps.map((s,j)=>`<div class="step ${j===i?'cur':''}"><div class="no">${j+1}</div><div class="tx"><b>${esc(s[0])}</b> — ${esc(s[1])}</div></div>`).join('')}
+    <div class="actions"><button class="ctl" onclick="comeOut()">← Come back out</button></div>`; return; }
+  const status = n.ghost?'<span class="chip ghost static">Not switched on</span>':`<span class="chip static">${n.group==='loop'?'turn loop':n.group==='mem'?'memory':'supporting'}</span>`;
+  const pinned=S.selected===n.id;
+  let content='';
+  if(S.tab==='what') content=`<p class="lede">${n.one}</p><details${pinned?' open':''}><summary>Read more</summary><p>${n.what}</p></details>${n.steps?`<details><summary>Steps in execution</summary>${n.steps.map((s,j)=>`<div class="step"><div class="no">${j+1}</div><div class="tx"><b>${esc(s[0])}</b> — ${esc(s[1])}</div></div>`).join('')}</details>`:''}`;
+  else if(S.tab==='how') content=`<p class="lede">${n.one}</p><p>${n.how}</p>`;
+  else content=`<p class="lede">${n.one}</p>`+(n.cond&&n.cond.length?qHtml(n.cond):`<p>Nothing open here right now.</p>`);
+  body.innerHTML=`<div class="eyebrow">${esc(n.code)} · ${pinned?'pinned':'hovering'}${isNew(n.id)?' · new in this chapter':''}</div><h1 class="t">${esc(n.name)}</h1><div class="sub">${status}</div>${content}
+  ${pinned?`<div class="actions">${n.steps?`<button class="ctl" onclick="goInside('${n.id}')">→ Go inside</button>`:''}<button class="ctl" onclick="select(null)">Back to chapter</button></div>`:''}`;
+}
+function renderChapterPanel(){
+  const c=CH[S.ch]; const last=S.ch===CH.length-1;
+  if(S.tab==='how'){ body.innerHTML=HOW_HTML; return; }
+  if(S.tab==='cond'){ body.innerHTML=`<div class="eyebrow">${esc(TITLE)}</div><h1 class="t">Open questions</h1><div class="sub">${last?'everything unresolved, by structure':'for the structures revealed so far'}</div>`+NODES.filter(n=>revealedIds().includes(n.id)&&n.cond&&n.cond.length).map(n=>`<h3 class="sec">${n.code} · ${esc(n.name)}${n.ghost?' <span class="chip ghost static">later</span>':''}</h3>${qHtml(n.cond)}`).join(''); return; }
+  const chips = last ? '' : `<h3 class="sec">New in this chapter</h3><div>${c.reveal.map(nodeChip).join('')}</div>`;
+  const nav=`<div class="actions"><button class="ctl" onclick="prevCh()" ${S.ch===0?'disabled':''}>◂ Back</button><button class="ctl primary" onclick="nextCh()" ${last?'disabled':''}>${S.ch===CH.length-2?'Show the whole system ▸':'Next ▸'}</button></div>`;
+  body.innerHTML=`<div class="eyebrow">Chapter ${S.ch+1} of ${CH.length}</div><h1 class="t">${esc(c.title)}</h1><p class="lede">${c.lede}</p>${c.story}${chips}${nav}
+  ${last?`<h3 class="sec">Decisions locked</h3><ul>${DECISIONS_HTML}</ul>`:''}`;
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;S.selPacket=null;renderPanel();drawPackets();}));
+
+/* ---------------- STATS ---------------- */
+function renderStats(){ const el=document.getElementById('stats'); const open=NODES.reduce((a,n)=>a+qOpen(n),0), routed=NODES.reduce((a,n)=>a+(n.cond||[]).filter(c=>c.to).length,0), res=NODES.reduce((a,n)=>a+(n.cond||[]).filter(c=>c.r).length,0);
+  const dyn={chapter:`${S.ch+1} / ${CH.length}`, shown:`${revealedIds().length} / ${NODES.length}`, questions:`${open} open · ${routed} routed · ${res} resolved`};
+  const all=[...(STATS||[]), {k:'Chapter',v:dyn.chapter},{k:'Structures shown',v:dyn.shown},{k:'Open questions',v:dyn.questions,grow:true}];
+  el.innerHTML=all.map(s=>`<div class="stat${s.grow?' grow':''}"><div class="k">${s.k}</div><div class="v">${s.v}</div></div>`).join(''); }
+
+/* ---------------- INDEX + RAIL ---------------- */
+function renderIndex(){
+  const ix=document.getElementById('index'); ix.innerHTML=''; const rev=new Set(revealedIds());
+  GROUPS.forEach(g=>{ const h=document.createElement('h4'); h.textContent=g.title; ix.appendChild(h);
+    NODES.filter(n=>n.group===g.id).forEach(n=>{ const b=document.createElement('button'); const shown=rev.has(n.id);
+      b.className='ix'+(n.ghost&&shown?' ghost':'')+(!shown?' later':'')+(S.selected===n.id?' on':'')+(isNew(n.id)?' new':''); b.dataset.id=n.id;
+      b.innerHTML=`<span class="code">${n.code}</span><span class="nm">${esc(n.name)}</span><span class="n" title="${shown?'open questions':'revealed in chapter'}">${shown?qOpen(n):'ch '+(revealChapterOf(n.id)+1)}</span>`;
+      b.addEventListener('click',()=>{ if(!shown){ gotoCh(revealChapterOf(n.id)); select(n.id); return; } if(S.view!=='world')comeOut(); select(n.id); focusNode(n); });
+      b.addEventListener('mouseenter',()=>{ if(S.view==='world'&&shown){S.hover=n.id;renderPanel();render();} });
+      b.addEventListener('mouseleave',()=>{ if(S.view==='world'){S.hover=null;renderPanel();render();} });
+      ix.appendChild(b); }); });
+  renderStats();
+}
+function renderRail(){ const r=document.getElementById('rail'); if(S.view!=='world'){ r.innerHTML=`<span class="title">THE SYSTEM &nbsp;›&nbsp; <b>${esc(byId[S.inside].code)} ${esc(byId[S.inside].name)}</b> &nbsp;·&nbsp; steps in execution</span>`; document.getElementById('flowSel').style.display='none'; return; }
+  r.innerHTML=CH.map((c,i)=>`<button class="ch ${i===S.ch?'on':i<S.ch?'done':''} ${i>S.maxCh+1?'locked':''}" title="${esc(c.title)}" onclick="gotoCh(${i})">${i+1}</button>`).join('')+`<span class="title">chapter ${S.ch+1} · <b>${esc(CH[S.ch].title)}</b></span>`;
+  const fs=document.getElementById('flowSel'); fs.style.display = S.ch===CH.length-1?'flex':'none';
+  if(!fs.dataset.built){ fs.innerHTML=[...FLOWS.map(f=>`<button data-f="${f.id}">${f.name}</button>`),'<button data-f="both">All flows</button>'].join(''); fs.dataset.built='1'; fs.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{S.flowSel=b.dataset.f;buildWorldScene();initPackets();render();})); }
+  fs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.f===S.flowSel));
+  document.getElementById('btnBack').disabled=S.ch===0; document.getElementById('btnNext').disabled=S.ch===CH.length-1;
+}
+
+/* ---------------- NAV ---------------- */
+function select(id){ S.selected=id; S.selPacket=null; renderIndex(); renderPanel(); render(); }
+function gotoCh(i){ i=Math.max(0,Math.min(CH.length-1,i)); if(S.view!=='world'){S.view='world';S.inside=null;} S.ch=i; S.maxCh=Math.max(S.maxCh,i); S.selected=null; S.hover=null; S.tab='what'; buildWorldScene(); initPackets(); S.playing=true; syncFlowBtn(); renderIndex(); render(); renderPanel(); fitView(true); }
+function nextCh(){ gotoCh(S.ch+1); } function prevCh(){ gotoCh(S.ch-1); }
+function goInside(id){ const n=byId[id]; if(!n||!n.steps)return; S.view='inside'; S.inside=id; S.selected='s0'; buildInsideScene(n); initPackets(); fitView(true); renderIndex(); render(); renderPanel(); }
+function comeOut(){ const was=S.inside; S.view='world'; S.inside=null; buildWorldScene(); initPackets(); S.selected=was; fitView(true); renderIndex(); render(); renderPanel(); }
+function orderList(){ return S.view==='world'?sceneNodes.map(n=>n.id):sceneNodes.map(n=>n.id); }
+document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT')return; const L=orderList(); let i=L.indexOf(S.selected);
+  if(e.key==='ArrowDown'){e.preventDefault();select(L[Math.min(L.length-1,i+1)]);}
+  else if(e.key==='ArrowUp'){e.preventDefault();select(L[Math.max(0,i-1)]);}
+  else if(e.key==='ArrowRight'){e.preventDefault(); if(S.view==='world'&&S.selected)goInside(S.selected);}
+  else if(e.key==='ArrowLeft'){e.preventDefault(); if(S.view==='inside')comeOut(); else select(null);}
+  else if(e.key==='Enter'||e.key===']'){e.preventDefault(); if(S.view==='world')nextCh();}
+  else if(e.key==='['){e.preventDefault(); if(S.view==='world')prevCh();}
+  else if(e.key===' '){e.preventDefault();toggleFlow();}
+  else if(e.key==='Escape'){select(null);} });
+
+/* ---------------- VIEW / PAN / ZOOM ---------------- */
+let tween=null;
+function applyView(){ world.setAttribute('transform',`translate(${S.tx},${S.ty}) scale(${S.k})`); }
+function tweenTick(){ if(!tween)return; const now=performance.now(); let u=Math.min(1,(now-tween.t0)/tween.dur); u=1-Math.pow(1-u,3); S.tx=tween.a.tx+(tween.b.tx-tween.a.tx)*u; S.ty=tween.a.ty+(tween.b.ty-tween.a.ty)*u; S.k=tween.a.k+(tween.b.k-tween.a.k)*u; applyView(); if(u>=1)tween=null; }
+function setView(tx,ty,k,anim){ tween=null; if(anim&&!matchMedia('(prefers-reduced-motion: reduce)').matches){ tween={a:{tx:S.tx,ty:S.ty,k:S.k},b:{tx,ty,k},t0:performance.now(),dur:520}; } else { S.tx=tx;S.ty=ty;S.k=k;applyView(); } }
+function bbox(){ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; sceneNodes.forEach(n=>{[P(n.gx,n.gy,n.h),P(n.gx+n.w,n.gy,n.h),P(n.gx+n.w,n.gy+n.d,-24),P(n.gx,n.gy+n.d,0),P(n.gx,n.gy,0)].forEach(p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);});}); return {x0,y0,x1,y1}; }
+function fitView(anim){ const r=svg.getBoundingClientRect(); if(!sceneNodes.length)return; const b=bbox(); const pad=40; const k=Math.min((r.width-pad*2)/Math.max(1,b.x1-b.x0),(r.height-pad*2)/Math.max(1,b.y1-b.y0)); if(r.width<80||r.height<80||!isFinite(k)||k<=0)return; const kk=Math.max(.2,Math.min(k,1.5)); setView(r.width/2-((b.x0+b.x1)/2)*kk, r.height/2-((b.y0+b.y1)/2)*kk+8, kk, anim); }
+function focusNode(n){ const r=svg.getBoundingClientRect(); const c=P(n.gx+n.w/2,n.gy+n.d/2,n.h/2); setView(r.width/2-c[0]*S.k, r.height/2-c[1]*S.k, S.k, true); }
+function zoomAt(f,cx,cy){ tween=null; const nk=Math.max(.35,Math.min(3,S.k*f)); S.tx=cx-(cx-S.tx)*(nk/S.k); S.ty=cy-(cy-S.ty)*(nk/S.k); S.k=nk; applyView(); }
+svg.addEventListener('wheel',e=>{e.preventDefault(); const r=svg.getBoundingClientRect(); zoomAt(e.deltaY<0?1.1:0.9,e.clientX-r.left,e.clientY-r.top);},{passive:false});
+let drag=null; svg.addEventListener('pointerdown',e=>{ if(e.button!==0)return; tween=null; drag={x:e.clientX,y:e.clientY,tx:S.tx,ty:S.ty,moved:false}; svg.setPointerCapture(e.pointerId); });
+svg.addEventListener('pointermove',e=>{ if(!drag)return; const dx=e.clientX-drag.x,dy=e.clientY-drag.y; if(Math.hypot(dx,dy)>3){drag.moved=true;svg.classList.add('dragging');} S.tx=drag.tx+dx; S.ty=drag.ty+dy; applyView(); });
+svg.addEventListener('pointerup',e=>{ if(drag&&!drag.moved){ select(null); } drag=null; svg.classList.remove('dragging'); });
+document.getElementById('zin').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.2,r.width/2,r.height/2);};
+document.getElementById('zout').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1/1.2,r.width/2,r.height/2);};
+window.addEventListener('resize',()=>fitView(false));
+
+/* ---------------- TIP ---------------- */
+function showTip(e,n){ tip.style.display='block'; tip.textContent=n.inside?n.desc:(n.ghost?'Later · ':'')+n.name+' — '+(n.one||'').replace(/<[^>]+>/g,''); moveTip(e); }
+function moveTip(e){ const r=svg.getBoundingClientRect(); let x=e.clientX-r.left+14,y=e.clientY-r.top+14; if(x+290>r.width)x-=300; if(y+60>r.height)y-=70; tip.style.left=x+'px'; tip.style.top=y+'px'; }
+function hideTip(){ tip.style.display='none'; }
+
+/* ---------------- CONTROLS ---------------- */
+function toggleFlow(){ S.playing=!S.playing; if(S.playing)S.selPacket=null; syncFlowBtn(); renderPanel(); drawPackets(); }
+document.getElementById('btnFlow').onclick=toggleFlow;
+document.getElementById('btnStep').onclick=stepOnce;
+document.getElementById('btnReset').onclick=()=>{ select(null); fitView(true); };
+document.getElementById('btnNext').onclick=nextCh; document.getElementById('btnBack').onclick=prevCh;
+
+/* ---------------- BOOT ---------------- */
+gotoCh(0);
+</script>

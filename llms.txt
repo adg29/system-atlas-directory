@@ -12,9 +12,14 @@ Do not treat an atlas as live production state. It is a curated snapshot of a pu
 
 ## Atlases
 
+Two atlases are published: QM and GEV.
+
 - [QM atlas (interactive)](https://adg29.github.io/system-atlas-directory/qm/) — multiplayer agent harness for work
 - [QM SYSTEM.md](https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
 - [QM source repo](https://github.com/yc-software/qm)
+- [GEV atlas (interactive)](https://adg29.github.io/system-atlas-directory/gev/) — God's Eye View, photoreal 3D globe of live public signals
+- [GEV SYSTEM.md](https://adg29.github.io/system-atlas-directory/gev/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
+- [GEV source repo](https://github.com/bilawalsidhu/gods-eye-view)
 
 ## Site
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "name": "System Atlas Directory",
-  "description": "Curated isometric atlases of real systems, starting with QM.",
+  "description": "Curated isometric atlases of real systems: QM and God's Eye View.",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "documentation": "https://adg29.github.io/system-atlas-directory/llms.txt",
   "resources": [
@@ -28,6 +28,16 @@
     {
       "name": "QM SYSTEM.md",
       "url": "https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md",
+      "type": "markdown"
+    },
+    {
+      "name": "GEV atlas",
+      "url": "https://adg29.github.io/system-atlas-directory/gev/",
+      "type": "html"
+    },
+    {
+      "name": "GEV SYSTEM.md",
+      "url": "https://adg29.github.io/system-atlas-directory/gev/SYSTEM.md",
       "type": "markdown"
     }
   ]
