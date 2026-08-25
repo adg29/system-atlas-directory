@@ -395,4 +395,4 @@ docs/                getting-started · deploy-directory · screenshots
 
 ## How this file is maintained
 
-Generated from `atlas/data.mjs` by `node atlas/build.mjs`, which also builds the interactive atlas (`atlas.html`). Edit the data file, rebuild, republish — never edit this file by hand.
+Generated from `qm/atlas/data.mjs` by `node qm/atlas/build.mjs`, which also builds the interactive atlas (`atlas.html`, published at https://adg29.github.io/system-atlas-directory/qm/). Edit the data file, rebuild, republish — never edit this file by hand.

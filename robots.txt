@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://adg29.github.io/system-atlas-directory/sitemap.xml

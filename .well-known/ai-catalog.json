@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "name": "System Atlas Directory",
+  "description": "Curated isometric atlases of real systems, starting with QM.",
+  "url": "https://adg29.github.io/system-atlas-directory/",
+  "documentation": "https://adg29.github.io/system-atlas-directory/llms.txt",
+  "resources": [
+    {
+      "name": "Directory",
+      "url": "https://adg29.github.io/system-atlas-directory/",
+      "type": "html"
+    },
+    {
+      "name": "Directory (markdown)",
+      "url": "https://adg29.github.io/system-atlas-directory/index.md",
+      "type": "markdown"
+    },
+    {
+      "name": "Catalog",
+      "url": "https://adg29.github.io/system-atlas-directory/catalog.json",
+      "type": "json"
+    },
+    {
+      "name": "QM atlas",
+      "url": "https://adg29.github.io/system-atlas-directory/qm/",
+      "type": "html"
+    },
+    {
+      "name": "QM SYSTEM.md",
+      "url": "https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md",
+      "type": "markdown"
+    }
+  ]
+}

@@ -3,9 +3,9 @@
 
 export const META = {
   title: 'QM',
-  artifactUrl: '',
-  sourcePath: 'atlas/data.mjs',
-  buildCmd: 'node atlas/build.mjs',
+  artifactUrl: 'https://adg29.github.io/system-atlas-directory/qm/',
+  sourcePath: 'qm/atlas/data.mjs',
+  buildCmd: 'node qm/atlas/build.mjs',
   stats: [
     { k: 'System', v: 'qm · public main' },
     { k: 'Harnesses', v: '4' },

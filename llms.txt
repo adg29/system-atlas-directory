@@ -1,0 +1,30 @@
+# System Atlas Directory
+
+> Curated isometric atlases of real systems. People get a clickable map. Agents get a generated text twin and a JSON catalog.
+
+This is a static GitHub Pages site. HTML is complete in the first response. No login is required for currently published atlases.
+
+## When to use this
+
+Use this directory when you need to understand how a system is put together: structures, data flows, decisions, and open questions. Start at the homepage, then open one atlas. Prefer SYSTEM.md when you want the whole design as text. Prefer the interactive map when a human will explore it.
+
+Do not treat an atlas as live production state. It is a curated snapshot of a public repo or a known design.
+
+## Atlases
+
+- [QM atlas (interactive)](https://adg29.github.io/system-atlas-directory/qm/) — multiplayer agent harness for work
+- [QM SYSTEM.md](https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
+- [QM source repo](https://github.com/yc-software/qm)
+
+## Site
+
+- [Directory home](https://adg29.github.io/system-atlas-directory/)
+- [Directory as markdown](https://adg29.github.io/system-atlas-directory/index.md)
+- [JSON catalog](https://adg29.github.io/system-atlas-directory/catalog.json)
+- [XML sitemap](https://adg29.github.io/system-atlas-directory/sitemap.xml)
+- [AI catalog](https://adg29.github.io/system-atlas-directory/.well-known/ai-catalog.json)
+- [Source repository](https://github.com/adg29/system-atlas-directory)
+
+## Adding an atlas
+
+Each atlas is a folder with `index.html` (the map), `SYSTEM.md` (the twin), and `atlas/data.mjs` (the only edited source). Rebuild with `node <folder>/atlas/build.mjs`. Then add the entry to `catalog.json`, `llms.txt`, `index.html`, `index.md`, and `sitemap.xml`.

@@ -1,0 +1,21 @@
+{
+  "name": "System Atlas Directory",
+  "url": "https://adg29.github.io/system-atlas-directory/",
+  "description": "Curated isometric atlases of real systems.",
+  "updated": "2026-08-24",
+  "atlases": [
+    {
+      "id": "qm",
+      "title": "QM",
+      "subtitle": "Multiplayer agent harness for work",
+      "source": "https://github.com/yc-software/qm",
+      "map": "https://adg29.github.io/system-atlas-directory/qm/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/qm/atlas/data.mjs",
+      "status": "free",
+      "structures": 14,
+      "chapters": 10,
+      "updated": "2026-08-24"
+    }
+  ]
+}
