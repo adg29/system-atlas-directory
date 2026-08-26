@@ -2,7 +2,7 @@
 
 Curated isometric atlases of real systems. Live: https://adg29.github.io/system-atlas-directory/
 
-Two atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/) and God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/).
+Three atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/), God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/), and Lattice at [`/lattice/`](https://adg29.github.io/system-atlas-directory/lattice/).
 
 ## Layout
 
@@ -10,6 +10,7 @@ Two atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-director
 - `catalog.json` / `llms.txt` — agent-readable catalog
 - `qm/` — QM atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 - `gev/` — GEV atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
+- `lattice/` — Lattice atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 
 ## Rebuild one atlas
 
@@ -19,9 +20,12 @@ cp qm/atlas.html qm/index.html   # if build writes next to atlas/
 
 node gev/atlas/build.mjs
 cp gev/atlas.html gev/index.html
+
+node lattice/atlas/build.mjs
+cp lattice/atlas.html lattice/index.html
 ```
 
-`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/` or `gev/`).
+`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/`, `gev/`, or `lattice/`).
 
 ## Next
 

@@ -29,6 +29,19 @@
       "structures": 15,
       "chapters": 10,
       "updated": "2026-08-25"
+    },
+    {
+      "id": "lattice",
+      "title": "Lattice",
+      "subtitle": "Type one sentence, get a playable isometric game",
+      "source": "https://github.com/plausibleventures/lattice",
+      "map": "https://adg29.github.io/system-atlas-directory/lattice/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/lattice/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/lattice/atlas/data.mjs",
+      "status": "free",
+      "structures": 14,
+      "chapters": 11,
+      "updated": "2026-08-25"
     }
   ]
 }

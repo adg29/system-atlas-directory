@@ -12,7 +12,7 @@ Do not treat an atlas as live production state. It is a curated snapshot of a pu
 
 ## Atlases
 
-Two atlases are published: QM and GEV.
+Three atlases are published: QM, GEV, and Lattice.
 
 - [QM atlas (interactive)](https://adg29.github.io/system-atlas-directory/qm/) — multiplayer agent harness for work
 - [QM SYSTEM.md](https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
@@ -20,6 +20,9 @@ Two atlases are published: QM and GEV.
 - [GEV atlas (interactive)](https://adg29.github.io/system-atlas-directory/gev/) — God's Eye View, photoreal 3D globe of live public signals
 - [GEV SYSTEM.md](https://adg29.github.io/system-atlas-directory/gev/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
 - [GEV source repo](https://github.com/bilawalsidhu/gods-eye-view)
+- [Lattice atlas (interactive)](https://adg29.github.io/system-atlas-directory/lattice/) — type one sentence, get a playable isometric game
+- [Lattice SYSTEM.md](https://adg29.github.io/system-atlas-directory/lattice/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
+- [Lattice source repo](https://github.com/plausibleventures/lattice)
 
 ## Site
 

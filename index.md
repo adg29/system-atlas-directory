@@ -1,13 +1,14 @@
 # System Atlas Directory
 
-Curated isometric atlases of real systems. Two atlases so far: QM and GEV. Each map has a generated text twin, so people can click around and agents can read the same source.
+Curated isometric atlases of real systems. Three atlases so far: QM, GEV, and Lattice. Each map has a generated text twin, so people can click around and agents can read the same source.
 
-More atlases will land here. QM and GEV are the first two.
+More atlases will land here. QM, GEV, and Lattice are the first three.
 
 ## Atlases
 
 - [QM](https://adg29.github.io/system-atlas-directory/qm/) — multiplayer agent harness for work. [SYSTEM.md](https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md). Source: [yc-software/qm](https://github.com/yc-software/qm). Status: free.
 - [GEV](https://adg29.github.io/system-atlas-directory/gev/) — God's Eye View, a photoreal 3D globe of live public signals. [SYSTEM.md](https://adg29.github.io/system-atlas-directory/gev/SYSTEM.md). Source: [bilawalsidhu/gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view). Status: free.
+- [Lattice](https://adg29.github.io/system-atlas-directory/lattice/) — type one sentence, get a playable isometric game. [SYSTEM.md](https://adg29.github.io/system-atlas-directory/lattice/SYSTEM.md). Source: [plausibleventures/lattice](https://github.com/plausibleventures/lattice). Status: free.
 
 ## Machine-readable
 
