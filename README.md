@@ -2,7 +2,7 @@
 
 Curated isometric atlases of real systems. Live: https://adg29.github.io/system-atlas-directory/
 
-Three atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/), God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/), and Lattice at [`/lattice/`](https://adg29.github.io/system-atlas-directory/lattice/).
+Four atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/), God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/), Lattice at [`/lattice/`](https://adg29.github.io/system-atlas-directory/lattice/), and Grok Bot 0.18 at [`/gb-018/`](https://adg29.github.io/system-atlas-directory/gb-018/).
 
 ## Layout
 
@@ -11,6 +11,7 @@ Three atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-direct
 - `qm/` — QM atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 - `gev/` — GEV atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 - `lattice/` — Lattice atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
+- `gb-018/` — Grok Bot 0.18 harness atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 
 ## Rebuild one atlas
 
@@ -23,9 +24,12 @@ cp gev/atlas.html gev/index.html
 
 node lattice/atlas/build.mjs
 cp lattice/atlas.html lattice/index.html
+
+node gb-018/atlas/build.mjs
+cp gb-018/atlas.html gb-018/index.html
 ```
 
-`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/`, `gev/`, or `lattice/`).
+`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/`, `gev/`, `lattice/`, or `gb-018/`).
 
 ## Next
 

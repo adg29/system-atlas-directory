@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "name": "System Atlas Directory",
-  "description": "Curated isometric atlases of real systems: QM, God's Eye View, and Lattice.",
+  "description": "Curated isometric atlases of real systems: QM, God's Eye View, Lattice, and Grok Bot 0.18.",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "documentation": "https://adg29.github.io/system-atlas-directory/llms.txt",
   "resources": [
@@ -48,6 +48,16 @@
     {
       "name": "Lattice SYSTEM.md",
       "url": "https://adg29.github.io/system-atlas-directory/lattice/SYSTEM.md",
+      "type": "markdown"
+    },
+    {
+      "name": "Grok Bot 0.18 atlas",
+      "url": "https://adg29.github.io/system-atlas-directory/gb-018/",
+      "type": "html"
+    },
+    {
+      "name": "Grok Bot 0.18 SYSTEM.md",
+      "url": "https://adg29.github.io/system-atlas-directory/gb-018/SYSTEM.md",
       "type": "markdown"
     }
   ]

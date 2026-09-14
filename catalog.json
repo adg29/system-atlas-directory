@@ -2,7 +2,7 @@
   "name": "System Atlas Directory",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "description": "Curated isometric atlases of real systems.",
-  "updated": "2026-08-25",
+  "updated": "2026-09-13",
   "atlases": [
     {
       "id": "qm",
@@ -42,6 +42,19 @@
       "structures": 14,
       "chapters": 11,
       "updated": "2026-08-25"
+    },
+    {
+      "id": "gb-018",
+      "title": "Grok Bot 0.18",
+      "subtitle": "harness study",
+      "source": "https://github.com/b-nnett/grok-bot-0.18-reconstructed",
+      "map": "https://adg29.github.io/system-atlas-directory/gb-018/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/gb-018/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/gb-018/atlas/data.mjs",
+      "status": "free",
+      "structures": 15,
+      "chapters": 11,
+      "updated": "2026-09-13"
     }
   ]
 }
