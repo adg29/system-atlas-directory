@@ -2,7 +2,7 @@
   "name": "System Atlas Directory",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "description": "Curated isometric atlases of real systems.",
-  "updated": "2026-09-13",
+  "updated": "2026-09-15",
   "atlases": [
     {
       "id": "qm",
@@ -55,6 +55,19 @@
       "structures": 15,
       "chapters": 11,
       "updated": "2026-09-13"
+    },
+    {
+      "id": "pstack",
+      "title": "pstack",
+      "subtitle": "Which pstack skill when \u2014 poteto-mode and the skill map",
+      "source": "https://github.com/cursor/plugins/tree/main/pstack",
+      "map": "https://adg29.github.io/system-atlas-directory/pstack/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/pstack/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/pstack/atlas/data.mjs",
+      "status": "free",
+      "structures": 18,
+      "chapters": 10,
+      "updated": "2026-09-15"
     }
   ]
 }
