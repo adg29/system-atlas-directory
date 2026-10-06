@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "name": "System Atlas Directory",
-  "description": "Curated isometric atlases of real systems: QM, God's Eye View, Lattice, Grok Bot 0.18, and pstack.",
+  "description": "Curated isometric atlases of real systems: QM, God's Eye View, Lattice, Grok Bot 0.18, pstack, and DayDream.",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "documentation": "https://adg29.github.io/system-atlas-directory/llms.txt",
   "resources": [
@@ -68,6 +68,16 @@
     {
       "name": "pstack SYSTEM.md",
       "url": "https://adg29.github.io/system-atlas-directory/pstack/SYSTEM.md",
+      "type": "markdown"
+    },
+    {
+      "name": "DayDream atlas",
+      "url": "https://adg29.github.io/system-atlas-directory/daydream/",
+      "type": "html"
+    },
+    {
+      "name": "DayDream SYSTEM.md",
+      "url": "https://adg29.github.io/system-atlas-directory/daydream/SYSTEM.md",
       "type": "markdown"
     }
   ]

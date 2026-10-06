@@ -2,7 +2,7 @@
   "name": "System Atlas Directory",
   "url": "https://adg29.github.io/system-atlas-directory/",
   "description": "Curated isometric atlases of real systems.",
-  "updated": "2026-09-15",
+  "updated": "2026-10-05",
   "atlases": [
     {
       "id": "qm",
@@ -68,6 +68,19 @@
       "structures": 18,
       "chapters": 10,
       "updated": "2026-09-15"
+    },
+    {
+      "id": "daydream",
+      "title": "DayDream",
+      "subtitle": "Local Mac memory \u2014 where you were, for you and your AI",
+      "source": "https://github.com/getnorthlight/daydream",
+      "map": "https://adg29.github.io/system-atlas-directory/daydream/",
+      "system_md": "https://adg29.github.io/system-atlas-directory/daydream/SYSTEM.md",
+      "data": "https://adg29.github.io/system-atlas-directory/daydream/atlas/data.mjs",
+      "status": "free",
+      "structures": 14,
+      "chapters": 10,
+      "updated": "2026-10-05"
     }
   ]
 }

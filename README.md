@@ -2,7 +2,7 @@
 
 Curated isometric atlases of real systems. Live: https://adg29.github.io/system-atlas-directory/
 
-Five atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/), God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/), Lattice at [`/lattice/`](https://adg29.github.io/system-atlas-directory/lattice/), Grok Bot 0.18 at [`/gb-018/`](https://adg29.github.io/system-atlas-directory/gb-018/), and pstack at [`/pstack/`](https://adg29.github.io/system-atlas-directory/pstack/).
+Six atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directory/qm/), God's Eye View at [`/gev/`](https://adg29.github.io/system-atlas-directory/gev/), Lattice at [`/lattice/`](https://adg29.github.io/system-atlas-directory/lattice/), Grok Bot 0.18 at [`/gb-018/`](https://adg29.github.io/system-atlas-directory/gb-018/), pstack at [`/pstack/`](https://adg29.github.io/system-atlas-directory/pstack/), and DayDream at [`/daydream/`](https://adg29.github.io/system-atlas-directory/daydream/).
 
 ## Layout
 
@@ -13,6 +13,7 @@ Five atlases so far: QM at [`/qm/`](https://adg29.github.io/system-atlas-directo
 - `lattice/` — Lattice atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 - `gb-018/` — Grok Bot 0.18 harness atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 - `pstack/` — pstack skills atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
+- `daydream/` — DayDream Mac memory atlas (`index.html` map, `SYSTEM.md` twin, `atlas/data.mjs` source)
 
 ## Rebuild one atlas
 
@@ -31,9 +32,12 @@ cp gb-018/atlas.html gb-018/index.html
 
 node pstack/atlas/build.mjs
 cp pstack/atlas.html pstack/index.html
+
+node daydream/atlas/build.mjs
+cp daydream/atlas.html daydream/index.html
 ```
 
-`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/`, `gev/`, `lattice/`, `gb-018/`, or `pstack/`).
+`build.mjs` writes `SYSTEM.md` and `atlas.html` in the parent of `atlas/` (so `qm/`, `gev/`, `lattice/`, `gb-018/`, `pstack/`, or `daydream/`).
 
 ## Next
 

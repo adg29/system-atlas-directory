@@ -12,7 +12,7 @@ Do not treat an atlas as live production state. It is a curated snapshot of a pu
 
 ## Atlases
 
-Five atlases are published: QM, GEV, Lattice, Grok Bot 0.18, and pstack.
+Six atlases are published: QM, GEV, Lattice, Grok Bot 0.18, pstack, and DayDream.
 
 - [QM atlas (interactive)](https://adg29.github.io/system-atlas-directory/qm/) — multiplayer agent harness for work
 - [QM SYSTEM.md](https://adg29.github.io/system-atlas-directory/qm/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
@@ -29,6 +29,9 @@ Five atlases are published: QM, GEV, Lattice, Grok Bot 0.18, and pstack.
 - [pstack atlas (interactive)](https://adg29.github.io/system-atlas-directory/pstack/) — which pstack skill when — poteto-mode and the skill map
 - [pstack SYSTEM.md](https://adg29.github.io/system-atlas-directory/pstack/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
 - [pstack source](https://github.com/cursor/plugins/tree/main/pstack)
+- [DayDream atlas (interactive)](https://adg29.github.io/system-atlas-directory/daydream/) — local Mac memory — where you were, for you and your AI
+- [DayDream SYSTEM.md](https://adg29.github.io/system-atlas-directory/daydream/SYSTEM.md) — generated text twin (decisions, structures, flows, questions)
+- [DayDream source repo](https://github.com/getnorthlight/daydream)
 
 ## Site
 
